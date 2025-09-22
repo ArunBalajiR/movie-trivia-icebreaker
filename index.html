@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Trivia Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'mono': ['JetBrains Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 font-mono text-gray-900 min-h-screen">
+    <div id="app">
+
+        <!-- Game View -->
+        <div id="game-view" class="view">
+            <!-- Header -->
+            <div class="bg-white border-b border-gray-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-2xl font-bold text-gray-900">Movie Trivia Challenge</h1>
+                    <div class="flex items-center gap-4">
+                        <span id="current-round" class="px-3 py-1 bg-gray-100 text-gray-800 text-sm font-medium rounded">Setup</span>
+                        <div id="loading-status" class="text-sm text-gray-600"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Setup Phase -->
+            <div id="setup-phase" class="game-phase">
+                <div class="p-6">
+                    <h2 class="text-3xl font-bold text-center mb-8 text-gray-900">Team Setup</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+                        <!-- Team A -->
+                        <div class="team-tile bg-white rounded-lg border border-gray-200 p-6" data-team="A">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-bold text-gray-900">Team A</h3>
+                                <button class="add-player-btn text-blue-600 hover:text-blue-800 text-sm font-medium">+ Add Player</button>
+                            </div>
+                            <div class="team-players space-y-3">
+                                <div class="player-input-group flex gap-2">
+                                    <input type="text" placeholder="Player 1" class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <button class="remove-player-btn text-red-600 hover:text-red-800 px-2 hidden">×</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Team B -->
+                        <div class="team-tile bg-white rounded-lg border border-gray-200 p-6" data-team="B">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-bold text-gray-900">Team B</h3>
+                                <button class="add-player-btn text-blue-600 hover:text-blue-800 text-sm font-medium">+ Add Player</button>
+                            </div>
+                            <div class="team-players space-y-3">
+                                <div class="player-input-group flex gap-2">
+                                    <input type="text" placeholder="Player 1" class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <button class="remove-player-btn text-red-600 hover:text-red-800 px-2 hidden">×</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Team C -->
+                        <div class="team-tile bg-white rounded-lg border border-gray-200 p-6" data-team="C">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-bold text-gray-900">Team C</h3>
+                                <button class="add-player-btn text-blue-600 hover:text-blue-800 text-sm font-medium">+ Add Player</button>
+                            </div>
+                            <div class="team-players space-y-3">
+                                <div class="player-input-group flex gap-2">
+                                    <input type="text" placeholder="Player 1" class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <button class="remove-player-btn text-red-600 hover:text-red-800 px-2 hidden">×</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Team D -->
+                        <div class="team-tile bg-white rounded-lg border border-gray-200 p-6" data-team="D">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-bold text-gray-900">Team D</h3>
+                                <button class="add-player-btn text-blue-600 hover:text-blue-800 text-sm font-medium">+ Add Player</button>
+                            </div>
+                            <div class="team-players space-y-3">
+                                <div class="player-input-group flex gap-2">
+                                    <input type="text" placeholder="Player 1" class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <button class="remove-player-btn text-red-600 hover:text-red-800 px-2 hidden">×</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-8">
+                        <button id="start-game" class="px-8 py-3 bg-green-600 text-white text-lg font-medium rounded-lg hover:bg-green-700 transition-colors">
+                            Start Game
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scoreboard -->
+            <div id="scoreboard" class="hidden">
+                <div class="bg-white border-b border-gray-200 px-6 py-4">
+                    <div class="grid grid-cols-4 gap-4">
+                        <div class="score-team bg-gray-50 rounded-lg p-4 text-center border border-gray-200" data-team="A">
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">Team A</h3>
+                            <div class="score text-3xl font-bold text-blue-600 mb-1">0</div>
+                            <div class="lives text-sm text-gray-600 mb-1">Lives: 3</div>
+                            <div class="at-risk text-xs text-red-600 font-medium"></div>
+                        </div>
+                        <div class="score-team bg-gray-50 rounded-lg p-4 text-center border border-gray-200" data-team="B">
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">Team B</h3>
+                            <div class="score text-3xl font-bold text-green-600 mb-1">0</div>
+                            <div class="lives text-sm text-gray-600 mb-1">Lives: 3</div>
+                            <div class="at-risk text-xs text-red-600 font-medium"></div>
+                        </div>
+                        <div class="score-team bg-gray-50 rounded-lg p-4 text-center border border-gray-200" data-team="C">
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">Team C</h3>
+                            <div class="score text-3xl font-bold text-purple-600 mb-1">0</div>
+                            <div class="lives text-sm text-gray-600 mb-1">Lives: 3</div>
+                            <div class="at-risk text-xs text-red-600 font-medium"></div>
+                        </div>
+                        <div class="score-team bg-gray-50 rounded-lg p-4 text-center border border-gray-200" data-team="D">
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">Team D</h3>
+                            <div class="score text-3xl font-bold text-orange-600 mb-1">0</div>
+                            <div class="lives text-sm text-gray-600 mb-1">Lives: 3</div>
+                            <div class="at-risk text-xs text-red-600 font-medium"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Round 1: Frame Guess -->
+            <div id="round1-phase" class="game-phase hidden">
+                <div class="p-6">
+                    <h2 class="text-3xl font-bold text-center mb-8 text-gray-900">Round 1: Frame Guess</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                        <!-- Game Status -->
+                        <div class="lg:col-span-3 mb-6">
+                            <div class="bg-white rounded-lg border border-gray-200 p-4">
+                                <div class="flex justify-between items-center">
+                                    <div class="text-lg font-bold text-gray-900">
+                                        Team <span id="current-team">A</span> - Movie <span id="current-movie-number">1</span>
+                                    </div>
+                                    <div class="text-sm text-gray-600">
+                                        <span id="frame-counter">Frame 1 of 4</span> | <span id="guess-counter">Guess 1 of 4</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Frame Display -->
+                        <div class="lg:col-span-2">
+                            <div class="bg-white rounded-lg border border-gray-200 p-6">
+                                <div id="movie-name-reveal" class="hidden mb-4 p-4 bg-yellow-100 border border-yellow-400 rounded-lg text-center">
+                                    <h3 class="text-xl font-bold text-yellow-800">Movie Answer:</h3>
+                                    <div id="revealed-movie-name" class="text-2xl font-bold text-yellow-900 mt-2"></div>
+                                </div>
+                                <img id="current-frame-img" src="" alt="Movie Frame" class="w-full h-auto max-h-96 object-contain rounded-lg">
+                                
+                                <!-- Frame Navigation -->
+                                <div class="flex justify-center items-center gap-4 mt-4">
+                                    <button id="prev-frame" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                        &lt; Previous
+                                    </button>
+                                    <span class="px-4 py-2 bg-gray-100 rounded-lg font-medium">
+                                        Frame <span id="current-frame-num">1</span> of 4
+                                    </span>
+                                    <button id="next-frame" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                        Next &gt;
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Controls -->
+                        <div class="space-y-4">
+                            <div class="bg-white rounded-lg border border-gray-200 p-6 text-center">
+                                <h3 class="text-xl font-bold text-gray-900 mb-4">Team <span id="current-team-control">A</span>'s Turn</h3>
+                                <div class="text-sm text-gray-600 mb-4">
+                                    Current Frame: <span id="control-frame-info">Frame 1</span><br>
+                                    This is guess attempt: <span id="control-guess-info">1</span>
+                                </div>
+                                <div class="space-y-3">
+                                    <button id="correct-guess" class="w-full px-4 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors">
+                                        Correct! (+<span id="points-for-guess">20</span> points)
+                                    </button>
+                                    <button id="wrong-guess" class="w-full px-4 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors">
+                                        Wrong (-5 points)
+                                    </button>
+                                    <button id="steal-attempt" class="w-full px-4 py-3 bg-yellow-600 text-white font-medium rounded-lg hover:bg-yellow-700 transition-colors">
+                                        Other Team Steals (+5)
+                                    </button>
+                                    <div class="flex gap-2">
+                                        <button id="prev-team-manual" class="flex-1 px-4 py-3 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors flex items-center justify-center">
+                                            <span class="mr-2">←</span> Previous
+                                        </button>
+                                        <button id="next-team-manual" class="flex-1 px-4 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center">
+                                            Next <span class="ml-2">→</span>
+                                        </button>
+                                    </div>
+                                    <button id="view-answer" class="w-full px-4 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors">
+                                        View Answer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Round 2: Rapid Fire -->
+            <div id="round2-phase" class="game-phase hidden">
+                <div class="p-6">
+                    <h2 class="text-3xl font-bold text-center mb-8 text-gray-900">Round 2: Rapid Fire</h2>
+                    <div class="max-w-4xl mx-auto space-y-8">
+                        <!-- Current Image Display -->
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 text-center">
+                            <div id="round2-movie-reveal" class="hidden mb-4 p-4 bg-yellow-100 border border-yellow-400 rounded-lg text-center">
+                                <h3 class="text-xl font-bold text-yellow-800">Movie Answer:</h3>
+                                <div id="round2-revealed-movie-name" class="text-2xl font-bold text-yellow-900 mt-2"></div>
+                            </div>
+                            <img id="round2-current-image" src="" alt="Movie Image" class="w-full h-auto max-h-96 object-contain rounded-lg mx-auto">
+                            <div class="mt-4">
+                                <span id="round2-image-counter" class="text-lg font-medium text-gray-700">Image 1 of X</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Team Answer Buttons -->
+                        <div class="bg-white rounded-lg border border-gray-200 p-6">
+                            <h3 class="text-xl font-bold text-center mb-6 text-gray-900">Which team got it correct?</h3>
+                            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                                <button class="team-answer-btn px-6 py-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors" data-team="A">
+                                    Team A (+20)
+                                </button>
+                                <button class="team-answer-btn px-6 py-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors" data-team="B">
+                                    Team B (+20)
+                                </button>
+                                <button class="team-answer-btn px-6 py-4 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 transition-colors" data-team="C">
+                                    Team C (+20)
+                                </button>
+                                <button class="team-answer-btn px-6 py-4 bg-orange-600 text-white font-bold rounded-lg hover:bg-orange-700 transition-colors" data-team="D">
+                                    Team D (+20)
+                                </button>
+                            </div>
+                            
+                            <div class="flex justify-center gap-4 flex-wrap">
+                                <button id="round2-wrong-answer" class="px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors">
+                                    Wrong Answer (-5 to specific team)
+                                </button>
+                                <button id="round2-view-answer" class="px-6 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors">
+                                    View Answer
+                                </button>
+                                <div class="flex gap-2">
+                                    <button id="round2-prev-image" class="px-4 py-3 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors flex items-center justify-center">
+                                        <span class="text-lg">←</span>
+                                    </button>
+                                    <button id="round2-next-image" class="px-4 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center">
+                                        <span class="text-lg">→</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Round 3: Plot Keywords -->
+            <div id="round3-phase" class="game-phase hidden">
+                <div class="p-6">
+                    <h2 class="text-3xl font-bold text-center mb-8 text-gray-900">Round 3: Plot Keywords</h2>
+                    <div class="max-w-4xl mx-auto space-y-8">
+                        <!-- Keywords Display -->
+                        <div class="bg-white rounded-lg border border-gray-200 p-8 text-center">
+                            <div id="round3-movie-reveal" class="hidden mb-4 p-4 bg-yellow-100 border border-yellow-400 rounded-lg text-center">
+                                <h3 class="text-xl font-bold text-yellow-800">Movie Answer:</h3>
+                                <div id="round3-revealed-movie-name" class="text-2xl font-bold text-yellow-900 mt-2"></div>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-4">Keywords:</h3>
+                            <div id="keywords-show" class="text-lg font-medium text-blue-600 leading-relaxed max-w-none mx-auto p-4 bg-gray-50 rounded-lg min-h-32 overflow-visible whitespace-normal break-words"></div>
+                        </div>
+                        
+                        <!-- Team Answer Section -->
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 text-center">
+                            <h3 class="text-xl font-bold text-gray-900 mb-6">Which team got it correct?</h3>
+                            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                                <button class="round3-team-btn px-6 py-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors" data-team="A">
+                                    Team A (+20)
+                                </button>
+                                <button class="round3-team-btn px-6 py-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors" data-team="B">
+                                    Team B (+20)
+                                </button>
+                                <button class="round3-team-btn px-6 py-4 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 transition-colors" data-team="C">
+                                    Team C (+20)
+                                </button>
+                                <button class="round3-team-btn px-6 py-4 bg-orange-600 text-white font-bold rounded-lg hover:bg-orange-700 transition-colors" data-team="D">
+                                    Team D (+20)
+                                </button>
+                            </div>
+                            <div class="flex justify-center gap-4 flex-wrap">
+                                <button id="round3-wrong-answer" class="px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors">
+                                    Wrong Answer (-5 to specific team)
+                                </button>
+                                <button id="round3-view-answer" class="px-6 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors">
+                                    Show Answer
+                                </button>
+                                <div class="flex gap-2">
+                                    <button id="prev-keywords" class="px-4 py-3 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors flex items-center justify-center">
+                                        <span class="text-lg">←</span>
+                                    </button>
+                                    <button id="next-keywords" class="px-4 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center">
+                                        <span class="text-lg">→</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Results -->
+            <div id="final-phase" class="game-phase hidden">
+                <div class="p-6">
+                    <h2 class="text-3xl font-bold text-center mb-8 text-gray-900">🏆 Final Results</h2>
+                    <div class="max-w-4xl mx-auto space-y-8">
+                        <div id="winning-team" class="bg-white rounded-lg border border-gray-200 p-8 text-center text-2xl font-bold text-gray-900"></div>
+                        <div id="best-individuals" class="bg-white rounded-lg border border-gray-200 p-6"></div>
+                        <div class="text-center">
+                            <button id="new-game" class="px-8 py-3 bg-blue-600 text-white text-lg font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                                New Game
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Animated Scoreboard Popup -->
+    <div id="scoreboard-popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 transform scale-0 transition-transform duration-500">
+            <h2 id="scoreboard-title" class="text-3xl font-bold text-center mb-6 text-gray-900">Round Complete!</h2>
+            <div id="scoreboard-content" class="space-y-4">
+                <!-- Team scores will be populated here -->
+            </div>
+            <div class="text-center mt-6">
+                <button id="close-scoreboard" class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                    Continue to Next Round
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Winner Announcement -->
+    <div id="winner-popup" class="fixed inset-0 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 transform scale-0 transition-transform duration-1000 shadow-2xl">
+            <div class="text-center">
+                <div class="text-6xl mb-4">🏆</div>
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Game Complete!</h2>
+                <div id="winner-announcement" class="text-2xl font-bold text-yellow-600 mb-6"></div>
+                <div id="final-scores" class="space-y-3 mb-6">
+                    <!-- Final scores will be populated here -->
+                </div>
+                <button id="new-game-winner" class="px-8 py-3 bg-green-600 text-white text-lg font-medium rounded-lg hover:bg-green-700 transition-colors">
+                    Start New Game
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

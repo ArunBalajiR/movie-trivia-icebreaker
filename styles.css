@@ -1,0 +1,179 @@
+/* Custom styles for tile effects and animations */
+
+.tile {
+    position: absolute;
+    background: #374151;
+    border: 1px solid #6b7280;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.tile.revealed {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Active team highlight */
+.score-team.active {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+/* Hover effects for upload areas */
+.upload-hover {
+    border-color: #3b82f6 !important;
+    background-color: #eff6ff !important;
+}
+
+/* Content item styles */
+.content-item {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.content-item button {
+    margin-left: auto;
+    padding: 4px 8px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.content-item button:hover {
+    background: #dc2626;
+}
+
+/* Animation classes */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+}
+
+/* Buzzer disabled state */
+.buzzer:disabled {
+    background: #6b7280 !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Player input group animation */
+.player-input-group {
+    transition: all 0.3s ease;
+}
+
+.player-input-group.removing {
+    opacity: 0;
+    transform: translateX(-20px);
+}
+
+/* Frame reordering styles */
+.content-item[draggable="true"] {
+    cursor: grab;
+    transition: all 0.2s ease;
+}
+
+.content-item[draggable="true"]:hover {
+    background: #f8fafc;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.content-item[draggable="true"]:active {
+    cursor: grabbing;
+}
+
+.content-item.opacity-50 {
+    opacity: 0.5;
+}
+
+/* Drag drop indicator */
+.border-t-2.border-blue-500 {
+    position: relative;
+}
+
+.border-t-2.border-blue-500::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #3b82f6;
+    z-index: 10;
+}
+
+/* Hide scrollbars but keep functionality */
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .grid-cols-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .lg\:grid-cols-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Focus states for accessibility */
+input:focus, textarea:focus, button:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* Loading states */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #e5e7eb;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
